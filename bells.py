@@ -7,23 +7,24 @@
     parameter to this program. The json document should be stylized as the following:
     {
         "calendar": {
-            "2017-08-16": "half_day"
-        },
-        "schedules": {
             "default": {
                 "Monday": "normal_day",
                 "Tuesday": "normal_day",
-                "Wednesday": "half_day",
+                "Wednesday": "normal_day",
                 "Thursday": "normal_day",
                 "Friday": "normal_day"
             },
+            "2017-08-17": "half_day"
+        },
+        "schedules": {
             "normal_day": {
-                "8:00": "high_school",
-                "8:20": "junior_high"
+                "08:00": "high_school",
+                "08:20": "junior_high"
             },
             "half_day": {
-                "9:00": "high_school",
-                "9:20": "junior_high"
+                "09:00": "high_school",
+                "09:20": "junior_high",
+                "00:56": "test_thing"
             }
         },
         "patterns": {
@@ -36,7 +37,8 @@
                 "rings": 3,
                 "duration": 1,
                 "spacing": 1
-            }
+            },
+            "test_thing": {}
         }
     }
 
