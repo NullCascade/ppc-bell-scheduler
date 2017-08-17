@@ -69,6 +69,9 @@ import sys
 import json
 import logging
 
+# Establish logging.
+logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime)s %(message)s", level=logging.DEBUG)
+
 # Make sure we have the third party schedule module installed.
 try:
     import schedule
@@ -80,9 +83,6 @@ except ImportError:
 jsonFile = None
 jsonConfig = None
 curSchedule = None
-
-# Establish logging.
-logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime)s %(message)s", level=logging.DEBUG)
 
 def ring_bells():
     """Rings the school bells in a pattern for the given schedule/time."""
