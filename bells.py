@@ -67,30 +67,34 @@ import time
 import datetime
 import sys
 import json
+import logging
 
 # Make sure we have the third party schedule module installed.
 try:
     import schedule
 except ImportError:
-    print("ERROR: Could not find schedule module. Install the module using:")
-    print("    pip install schedule")
+    logging.error("ERROR: Could not find schedule module. Install the module using:")
+    logging.error("    pip install schedule")
     sys.exit(0)
 
 jsonFile = None
 jsonConfig = None
 curSchedule = None
 
+# Establish logging.
+logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime)s %(message)s", level=logging.DEBUG)
+
 def ring_bells():
     """Rings the school bells in a pattern for the given schedule/time."""
     # Need to get the pattern for this time slot and apply it.
     curTime = time.strftime("%H:%M")
     if curTime not in jsonConfig["schedules"][curSchedule]:
-        print("ERROR: Couldn't find time record for time " + curTime + " in schedule " + curSchedule)
+        logging.error("Couldn't find time record for time " + curTime + " in schedule " + curSchedule)
         return
 
     # Obtain the pattern to use. Play it.
     pattern = jsonConfig["schedules"][curSchedule][curTime]
-    print("Playing pattern: " + pattern)
+    logging.debug("Playing bell: " + pattern)
 
 def reload_schedule():
     """Reloads the schedule from our json file."""
@@ -100,14 +104,13 @@ def reload_schedule():
     jsonConfig = None
     curSchedule = None
 
-    print("Reloading schedule...")
+    logging.debug("Reloading schedule...")
     with open(jsonFile) as jsonFileHandle:
         jsonConfig = json.load(jsonFileHandle)
 
     # Check to see if this date has a specific schedule.
     curDate = datetime.datetime.today().strftime("%Y-%m-%d")
     if curDate in jsonConfig["calendar"]:
-        print("Found date in calendar. Using schedule.")
         curSchedule = jsonConfig["calendar"][curDate]
     else:
         # If this isn't a special day, we look up the schedule by day of the week.
@@ -116,7 +119,7 @@ def reload_schedule():
 
     # Now that we have the schedule to use, does it exist?
     if curSchedule not in jsonConfig["schedules"]:
-        print("ERROR: Schedule" + curSchedule + " not found in json config. Aborting.")
+        logging.error("Schedule" + curSchedule + " not found in json config. Aborting.")
         return
 
     # Clear currently scheduled bells.
@@ -125,17 +128,19 @@ def reload_schedule():
     # Add bells for this schedule.
     for bellTime in jsonConfig["schedules"][curSchedule]:
         schedule.every().day.at(bellTime).do(ring_bells).tag("current")
-        print("Scheduled bells using pattern '" + jsonConfig["schedules"][curSchedule][bellTime] + "' at " + bellTime)
+        logging.debug("Scheduled bells using pattern '" + jsonConfig["schedules"][curSchedule][bellTime] + "' at " + bellTime)
 
 # Make sure our first argument is a file.
 if len(sys.argv) != 2:
-    print("ERROR: Invalid use. Usage:")
-    print("    sudo python " + sys.argv[0] + " <path to json config>")
+    logging.error("Invalid use. Usage:")
+    logging.error("    sudo python " + sys.argv[0] + " <path to json config>")
     sys.exit(0)
 jsonFile = sys.argv[1]
 
 # Main execution
 try:
+    logging.debug("System online.")
+
     # Initial calls.
     reload_schedule()
 
@@ -146,4 +151,4 @@ try:
         schedule.run_pending()
         time.sleep(1)
 except KeyboardInterrupt:
-    print("Execution manually broken.")
+    logging.debug("Execution manually broken.")
