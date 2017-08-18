@@ -49,7 +49,6 @@
     Daniel Bader.
 
     This module is licensed under MIT. See license.txt for more information.
-
 """
 #!/usr/bin/python
 
@@ -94,8 +93,13 @@ def ring_bells():
         logging.error("Couldn't find time record for time " + curTime + " in schedule " + curSchedule)
         return
 
-    # Obtain the pattern to use. Play it.
+    # Obtain the pattern to use.
     pattern = jsonConfig["schedules"][curSchedule][curTime]
+    if pattern not in jsonConfig["patterns"]:
+        logging.error("Could not find pattern '" + pattern + "'.")
+        return
+
+    # Play the pattern.
     logging.debug("Playing bell: " + pattern)
 
 def reload_schedule():
