@@ -69,6 +69,14 @@ import datetime
 import sys
 import json
 import logging
+import RPi.GPIO as GPIO
+
+# Configure Pi pin output.
+bellPins = [7, 11, 13]
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(True)
+for pin in bellPins:
+    GPIO.setup(pin, GPIO.OUT)
 
 # Establish logging.
 logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime)s %(message)s", level=logging.DEBUG)
@@ -84,6 +92,15 @@ except ImportError:
 jsonFile = None
 jsonConfig = None
 curSchedule = None
+
+def power_bells(state):
+    """Powers or unpowers the bells."""
+    if state:
+        for pin in bellPins:
+            GPIO.output(pin, GPIO.HIGH)
+    elif not state:
+        for pin in bellPins:
+            GPIO.output(pin, GPIO.LOW)
 
 def ring_bells():
     """Rings the school bells in a pattern for the given schedule/time."""
@@ -101,6 +118,14 @@ def ring_bells():
 
     # Play the pattern.
     logging.debug("Playing bell: " + pattern)
+    bellRings = jsonConfig["patterns"][pattern]["rings"]
+    bellDuration = jsonConfig["patterns"][pattern]["duration"]
+    bellSpacing = jsonConfig["patterns"][pattern]["spacing"]
+    for _ in range(bellRings):
+        power_bells(True)
+        time.sleep(bellDuration)
+        power_bells(False)
+        time.sleep(bellSpacing)
 
 def reload_schedule():
     """Reloads the schedule from our json file."""
@@ -158,3 +183,5 @@ try:
         time.sleep(1)
 except KeyboardInterrupt:
     logging.debug("Execution manually broken.")
+finally:
+    GPIO.cleanup()

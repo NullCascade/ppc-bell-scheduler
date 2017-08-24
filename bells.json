@@ -3,36 +3,133 @@
 		"default": {
 			"Monday": "normal_day",
 			"Tuesday": "normal_day",
-			"Wednesday": "normal_day",
+			"Wednesday": "chapel",
 			"Thursday": "normal_day",
 			"Friday": "normal_day"
 		},
-		"2017-08-23": "half_day"
+		"2017-09-01": "minimum_day",
+		"2017-10-13": "minimum_day",
+		"2018-01-12": "minimum_day",
+		"2018-02-16": "minimum_day",
+		"2018-03-02": "minimum_day",
+		"2018-03-30": "minimum_day",
+		"2017-12-14": "finals",
+		"2017-12-15": "finals",
+		"2017-12-18": "finals",
+		"2017-12-19": "finals",
+		"2018-05-22": "finals",
+		"2018-05-23": "finals",
+		"2018-05-24": "finals",
+		"2018-05-25": "finals"
+
 	},
 	"schedules": {
 		"normal_day": {
-			"12:00": "high_school",
-			"12:20": "junior_high"
+			"07:55": "junior_high",
+			"08:00": "junior_high",
+			"09:20": "junior_high",
+			"09:35": "junior_high",
+			"09:40": "junior_high",
+			"10:55": "junior_high",
+			"11:00": "junior_high",
+			"12:15": "junior_high",
+			"12:45": "junior_high",
+			"12:50": "junior_high",
+			"14:25": "junior_high",
+			"15:00": "junior_high",
+			"08:15": "high_school",
+			"08:20": "high_school",
+			"09:40": "high_school",
+			"09:55": "high_school",
+			"10:00": "high_school",
+			"11:25": "high_school",
+			"11:30": "high_school",
+			"12:50": "high_school",
+			"13:20": "high_school",
+			"13:25": "high_school",
+			"14:45": "high_school",
+			"15:15": "high_school"
 		},
-		"half_day": {
-			"20:51": "high_school",
-			"20:52": "junior_high",
-			"13:19": "test_thing"
+		"chapel": {
+			"07:55": "junior_high",
+			"08:00": "junior_high",
+			"09:10": "junior_high",
+			"09:25": "junior_high",
+			"09:30": "junior_high",
+			"10:40": "junior_high",
+			"10:45": "junior_high",
+			"11:30": "junior_high",
+			"11:55": "junior_high",
+			"12:00": "junior_high",
+			"13:15": "junior_high",
+			"13:20": "junior_high",
+			"14:25": "junior_high",
+
+			"08:15": "high_school",
+			"08:20": "high_school",
+			"09:30": "high_school",
+			"09:45": "high_school",
+			"09:50": "high_school",
+			"10:55": "high_school",
+			"11:00": "high_school",
+			"12:05": "high_school",
+			"12:10": "high_school",
+			"12:55": "high_school",
+			"13:00": "high_school",
+			"13:30": "high_school",
+			"13:35": "high_school",
+			"14:45": "high_school",
+			"15:15": "high_school"
+		},
+		"minimum_day": {
+			"07:55": "junior_high",
+			"08:00": "junior_high",
+			"08:50": "junior_high",
+			"09:05": "junior_high",
+			"09:10": "junior_high",
+			"10:00": "junior_high",
+			"10:05": "junior_high",
+			"10:55": "junior_high",
+			"11:10": "junior_high",
+			"11:15": "junior_high",
+			"12:05": "junior_high",
+
+			"08:15": "high_school",
+			"08:20": "high_school",
+			"09:10": "high_school",
+			"09:25": "high_school",
+			"09:30": "high_school",
+			"10:20": "high_school",
+			"10:25": "high_school",
+			"11:15": "high_school",
+			"11:30": "high_school",
+			"11:35": "high_school",
+			"12:25": "high_school"
+		},
+		"finals": {
+			"07:55": "junior_high",
+			"08:00": "junior_high",
+			"09:45": "junior_high",
+			"10:10": "junior_high",
+			"10:15": "junior_high",
+			"12:05": "junior_high",
+
+			"08:15": "high_school",
+			"08:20": "high_school",
+			"10:05": "high_school",
+			"10:35": "high_school",
+			"10:40": "high_school",
+			"12:25": "high_school"
 		}
 	},
 	"patterns": {
 		"high_school": {
 			"rings": 1,
-			"duration": 2,
-			"spacing": 1
+			"duration": 5,
+			"spacing": 0
 		},
 		"junior_high": {
-			"rings": 3,
-			"duration": 1,
-			"spacing": 1
-		},
-		"test_thing": {
-			"rings": 1,
+			"rings": 2,
 			"duration": 2,
 			"spacing": 1
 		}
