@@ -28,24 +28,24 @@ sudo python /home/pi/ppc-bell-scheduler/bells.py /home/pi/ppc-bell-scheduler/bel
 All configuration is done via a json file. The most bare-bones configuration to ring a bell at noon every Wednesday, plus on August 24th (which is a Thursday), looks like this:
 ```json
 {
-	"calendar": {
-		"default": {
-			"Wednesday": "noon_schedule"
-		},
+    "calendar": {
+        "default": {
+            "Wednesday": "noon_schedule"
+        },
         "2017-08-24": "one_second_bell"
-	},
-	"schedules": {
-		"noon_schedule": {
-			"12:00": "one_sec_bell"
-		}
-	},
-	"patterns": {
-		"one_sec_bell": {
-			"rings": 1,
-			"duration": 1,
-			"spacing": 0
-		}
-	}
+    },
+    "schedules": {
+        "noon_schedule": {
+            "12:00": "one_sec_bell"
+        }
+    },
+    "patterns": {
+        "one_sec_bell": {
+            "rings": 1,
+            "duration": 1,
+            "spacing": 0
+        }
+    }
 }
 ```
 
