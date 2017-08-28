@@ -69,14 +69,22 @@ import datetime
 import sys
 import json
 import logging
-import RPi.GPIO as GPIO
+
+pinlessMode = False
+if not pinlessMode:
+    try:
+        import RPi.GPIO as GPIO
+    except ImportError:
+        print("Could not load RPi.GPIO. Is this installed on a valid device? Defaulting to pinless mode.")
+        pinlessMode = True
 
 # Configure Pi pin output.
 bellPins = [7, 11, 13]
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(True)
-for pin in bellPins:
-    GPIO.setup(pin, GPIO.OUT)
+if not pinlessMode:
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(True)
+    for pin in bellPins:
+        GPIO.setup(pin, GPIO.OUT)
 
 # Establish logging.
 logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime)s %(message)s", level=logging.DEBUG)
@@ -85,7 +93,7 @@ logging.basicConfig(filename="bellSchedule.log", filemode="w", format="%(asctime
 try:
     import schedule
 except ImportError:
-    logging.error("ERROR: Could not find schedule module. Install the module using:")
+    logging.error("Could not find schedule module. Install the module using:")
     logging.error("    pip install schedule")
     sys.exit(0)
 
@@ -95,12 +103,15 @@ curSchedule = None
 
 def power_bells(state):
     """Powers or unpowers the bells."""
-    if state:
-        for pin in bellPins:
-            GPIO.output(pin, GPIO.HIGH)
-    elif not state:
-        for pin in bellPins:
-            GPIO.output(pin, GPIO.LOW)
+    if not pinlessMode:
+        if state:
+            for pin in bellPins:
+                GPIO.output(pin, GPIO.HIGH)
+        elif not state:
+            for pin in bellPins:
+                GPIO.output(pin, GPIO.LOW)
+    else:
+        logging.debug("Bell state: " + str(state))
 
 def ring_bells():
     """Rings the school bells in a pattern for the given schedule/time."""
@@ -135,9 +146,23 @@ def reload_schedule():
     jsonConfig = None
     curSchedule = None
 
+    # Clear currently scheduled bells.
+    schedule.clear("current")
+
     logging.debug("Reloading schedule...")
     with open(jsonFile) as jsonFileHandle:
         jsonConfig = json.load(jsonFileHandle)
+
+    # Check that default structure for json config is respected.
+    if "calendar" not in jsonConfig or "default" not in jsonConfig["calendar"]:
+        logging.error("Malformed json config. Invalid calendar table.")
+        return
+    elif "schedules" not in jsonConfig:
+        logging.error("Malformed json config. Invalid schedules table.")
+        return
+    elif "patterns" not in jsonConfig:
+        logging.error("Malformed json config. Invalid patterns table.")
+        return
 
     # Check to see if this date has a specific schedule.
     curDate = datetime.datetime.today().strftime("%Y-%m-%d")
@@ -146,15 +171,16 @@ def reload_schedule():
     else:
         # If this isn't a special day, we look up the schedule by day of the week.
         curDayOfWeek = datetime.datetime.now().strftime("%A")
-        curSchedule = jsonConfig["calendar"]["default"][curDayOfWeek]
+        if curDayOfWeek in jsonConfig["calendar"]["default"]:
+            curSchedule = jsonConfig["calendar"]["default"][curDayOfWeek]
+        else:
+            logging.debug("No schedule found for date.")
+            return
 
     # Now that we have the schedule to use, does it exist?
     if curSchedule not in jsonConfig["schedules"]:
         logging.error("Schedule" + curSchedule + " not found in json config. Aborting.")
         return
-
-    # Clear currently scheduled bells.
-    schedule.clear("current")
 
     # Add bells for this schedule.
     for bellTime in jsonConfig["schedules"][curSchedule]:
@@ -184,4 +210,5 @@ try:
 except KeyboardInterrupt:
     logging.debug("Execution manually broken.")
 finally:
-    GPIO.cleanup()
+    if not pinlessMode:
+        GPIO.cleanup()
